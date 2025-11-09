@@ -1,0 +1,157 @@
+Assignment No.2(A)
+
+Title:
+a. Design and Develop SQLDDL statements which demonstrate the use of SQL
+objects such as Table, View, Index, Sequence, Synonym, different constraints. b. Write at least 10 SQL queries on the suitable database application using
+SQL/DML statements.
+
+
+
+Solution:
+I. Create following table
+Table Name: Customer
+
+Table Column Name: Account_no, Name, Balance, City mysql> create database Prac2;
+Query OK, 1 row affected (0.01 sec)
+mysql> use Prac2;
+Database changed
+mysql> create table Customers(Account_no int primary key
+AUTO_INCREMENT,Name varchar(20) NOT NULL,Balance int,City
+varchar(20));
+Query OK, 0 rows affected (0.04 sec)
+mysql> Desc Customers;
++------------+-------------+------+-----+---------+----------------+
+| Field | Type | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+----------------+
+| Account_no | int | NO | PRI | NULL | auto_increment |
+| Name | varchar(20) | NO | | NULL | |
+| Balance | int | YES | | NULL | |
+| City | varchar(20) | YES | | NULL | |
++------------+-------------+------+-----+---------+----------------+
+4 rows in set (0.01 sec)
+
+II. Insert Following Record
+1 Ram 10000 Pune
+2 Ravi 25000 Nashik
+3 Sachin 30000 Mumbai mysql> insert into
+Customers(Name,Balance,City)values("Ram",10000,"Pune"),("Ravi",2500
+0,"Nashik"),("Sachin",30000,"Mumbai");
+Query OK, 3 rows affected (0.01 sec)
+Records: 3 Duplicates: 0 Warnings: 0
+mysql> select *from Customers;
++------------+--------+---------+--------+
+| Account_no | Name | Balance | City |
++------------+--------+---------+--------+
+| 1 | Ram | 10000 | Pune |
+| 2 | Ravi | 25000 | Nashik |
+| 3 | Sachin | 30000 | Mumbai |
++------------+--------+---------+--------+
+3 rows in set (0.00 sec)
+III. Set Operation: Union, Intersection, Minus
+Create Following Table
+Table Name: Loan
+Table Column Name: Loan_no, Name, Loan_Amount
+Insert Following Record
+1 Ram 10000
+2 Ravi 50000
+
+3 Dipak 40000 mysql> create table Loan(Loan_no int primary key AUTO_INCREMENT,Name
+varchar(20) NOT NULL,Loan_amount int);
+Query OK, 0 rows affected (0.03 sec)
+mysql> insert into
+Loan(Name,Loan_amount)values("Ram",10000),("Ravi",50000),("Dipak",400
+00);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3 Duplicates: 0 Warnings: 0
+mysql> select *from Loan;
++---------+-------+-------------+
+| Loan_no | Name | Loan_amount |
++---------+-------+-------------+
+| 1 | Ram | 10000 |
+| 2 | Ravi | 50000 |
+| 3 | Dipak | 40000 |
++---------+-------+-------------+
+3 rows in set (0.00 sec)
+
+1) Select Customer having account in the bank or taken the loan from bank. mysql> select name from Customers union select name from Loan;
++--------+
+| name |
++--------+
+| Ram |
+| Ravi |
+| Sachin |
+| Dipak |
++--------+
+4 rows in set (0.01 sec)
+2) Select Customer Having Account as well as loan in the bank. mysql> select Name from Customers where Name in (select Name from
+Loan);
++------+
+| Name |
++------+
+| Ram |
+| Ravi |
++------+
+2 rows in set (0.01 sec)
+3) Select customer having Account in the bank but not taken the loan. mysql> select Name from Customers where Name not in (select Name from
+Loan);
++--------+
+| Name |
++--------+
+| Sachin |
++--------+
+1 row in set (0.00 sec)
+IV. 1) Create A View to display customer having balance greater than 20000. mysql> create view Customer_Above_20000 as select *from Customers
+where Balance>= 20000;
+Query OK, 0 rows affected (0.01 sec)
+mysql> select *from Customer_Above_20000;
++------------+--------+---------+--------+
+| Account_no | Name | Balance | City |
++------------+--------+---------+--------+
+| 2 | Ravi | 25000 | Nashik |
+| 3 | Sachin | 30000 | Mumbai |
++------------+--------+---------+--------+
+2 rows in set (0.01 sec)
+
+2) Create A View to display customer from Nashik Having Balance greater
+than 20000. mysql> create view Customer_Nashik as select *from Customers where
+Balance>= 20000 and City="Nashik";
+Query OK, 0 rows affected (0.01 sec)
+mysql> select *from Customer_Nashik;
++------------+------+---------+--------+
+| Account_no | Name | Balance | City |
++------------+------+---------+--------+
+| 2 | Ravi | 25000 | Nashik |
++------------+------+---------+--------+
+1 row in set (0.00 sec)
+V. 1) Display Customer in the ascending order of Balance mysql> Select *from Customer
+-> order by Balance asc;
++------------+--------+----------+--------+
+| Account_no | Name | Balance | City |
++------------+--------+----------+--------+
+| 1 | Ram | 10000.00 | Pune |
+| 2 | Ravi | 25000.00 | Nasik |
+| 3 | Sachin | 30000.00 | Mumbai |
++------------+--------+----------+--------+
+3 rows in set (0.01 sec)
+
+2) Display Borower in the descending order of loan_amount mysql> Select *from Loan
+-> order by Loan_amount desc;
++---------+-------+-------------+
+| Loan_no | Name | Loan_Amount |
++---------+-------+-------------+
+| 2 | Ravi | 50000.00 |
+| 3 | Dipak | 40000.00 |
+| 1 | Ram | 10000.00 |
++---------+-------+-------------+
+3 rows in set (0.00 sec)
+
+VI. Calculate and display Intrest on given loan for 20 year(Use Synonym) mysql> select Name,Loan_Amount,Loan_Amount*0.04*20 as
+IntrestAfter20Yrs from Loan;
++-------+-------------+-------------------+
+| Name | Loan_Amount | IntrestAfter20Yrs |
++-------+-------------+-------------------+
+| Ram | 10000.00 | 8000.0000 |
+| Ravi | 50000.00 | 40000.0000 |
+| Dipak | 40000.00 | 32000.0000 |
++-------+-------------+-------------------+
+3 rows in set (0.01 sec)
