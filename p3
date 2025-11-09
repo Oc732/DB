@@ -1,0 +1,123 @@
+Assignment No.3(A)
+
+Title:
+All Types Of Joins,Sub-Query And View:
+Write Atleast 10 SQL Queries for suitable database application using SQL DML
+statements
+
+Solution:
+I. Create following table
+
+Table Name: Student_Mark
+Table Column Name: Rollno,Name,Marks,Branch
+
+mysql> create database P3;
+Query OK, 1 row affected (0.02 sec)
+mysql> use P3;
+Database changed
+mysql> create table Student_Mark(RollNo int,Name varchar(20),Marks
+int,Branch Varchar(20));
+Query OK, 0 rows affected (0.04 sec)
+
+II. Apply primary key constraint 
+
+mysql> Alter table Student_Mark ADD Primary Key(RollNo);
+Query OK, 0 rffected (0.06 sec)
+Records: 0 Duplicaows ates: 0 Warnings: 0
+
+III. Insert Four Records
+
+1. Ravi 90 Computer
+2. Vedika 70 Computer
+3. Aarush 95 IT
+4. Jyoti 60 IT
+mysql> insert into Student_Mark
+values(1,"Ravi",90,"Computer"),(2,"Vedika",70,"Computer"),(3,"Aarush",
+95,"IT"),(4,"Jyoti",60,"IT");
+Query OK, 4 rows affected (0.01 sec)
+Records: 4 Duplicates: 0 Warnings: 0
+mysql> select *from Student_Mark;
++--------+--------+-------+----------+
+| RollNo | Name | Marks | Branch |
++--------+--------+-------+----------+
+| 1 | Ravi | 90 | Computer |
+| 2 | Vedika | 70 | Computer |
+| 3 | Aarush | 95 | IT |
+| 4 | Jyoti | 60 | IT |
++--------+--------+-------+----------+
+4 rows in set (0.00 sec)
+
+IV. Display Students Having Marks above 70 mysql> select *from Student_Mark where Marks >= 70;
++--------+--------+-------+----------+
+| RollNo | Name | Marks | Branch |
++--------+--------+-------+----------+
+| 1 | Ravi | 90 | Computer |
+| 2 | Vedika | 70 | Computer |
+| 3 | Aarush | 95 | IT |
++--------+--------+-------+----------+
+3 rows in set (0.00 sec)
+
+V. Display Students Having Marks below 70 mysql> select *from Student_Mark where Marks < 70;
++--------+-------+-------+--------+
+| RollNo | Name | Marks | Branch |
++--------+-------+-------+--------+
+| 4 | Jyoti | 60 | IT |
++--------+-------+-------+--------+
+1 row in set (0.00 sec)
+
+VI. Display Students Having marks equal to 70 and name is Vedika mysql> select *from Student_Mark where Marks=70 and Name="Vedika";
+
++--------+--------+-------+----------+
+| RollNo | Name | Marks | Branch |
++--------+--------+-------+----------+
+| 2 | Vedika | 70 | Computer |
++--------+--------+-------+----------+
+1 row in set (0.00 sec)
+
+VII. Change Student Name Ravi To Sachin
+
+mysql> select *from Student_Mark;
++--------+--------+-------+----------+
+| RollNo | Name | Marks | Branch |
++--------+--------+-------+----------+
+| 1 | Sachin | 90 | Computer |
+| 2 | Vedika | 70 | Computer |
+| 3 | Aarush | 95 | IT |
+| 4 | Jyoti | 60 | IT |
++--------+--------+-------+----------+
+4 rows in set (0.00 sec)
+
+VIII. Delete Student whose Name is Aarush
+
+mysql> select *from Student_Mark;
++--------+--------+-------+----------+
+| RollNo | Name | Marks | Branch |
++--------+--------+-------+----------+
+| 1 | Sachin | 90 | Computer |
+| 2 | Vedika | 70 | Computer |
+| 4 | Jyoti | 60 | IT |
++--------+--------+-------+----------+
+3 rows in set (0.00 sec)
+
+IX. Write A Function To Display student having Maximum Marks mysql> select *from Student_Mark where Marks=(Select max(Marks) from
+Student_Mark);
+
++--------+--------+-------+----------+
+| RollNo | Name | Marks | Branch |
++--------+--------+-------+----------+
+| 1 | Sachin | 90 | Computer |
++--------+--------+-------+----------+
+1 row in set (0.02 sec)
+
+X. Display Minimum,Maximum,Average,Sum,Total count of each branch
+mysql> Select Branch,min(Marks) as Minimum,max(Marks) as
+Maximum,avg(Marks) as Average,sum(Marks) as Sum,count(Branch) as
+Count from Student_Mark group by Branch;
+
++----------+---------+---------+---------+------+-------+
+| Branch | Minimum | Maximum | Average | Sum | Count |
++----------+---------+---------+---------+------+-------+
+| Computer | 70 | 90 | 80.0000 | 160 | 2 |
+| IT | 60 | 60 | 60.0000 | 60 | 1 |
++----------+---------+---------+---------+------+-------+
+2 rows in set (0.01 sec)
