@@ -1,0 +1,270 @@
+Assignment no - 2(B)
+"MongoDB – Aggregation and Indexing:
+Design and Develop MongoDB Queries using aggregation and indexing with
+suitable example using MongoDB"
+
+
+test> use TEA_15
+switched to db TEA_15
+TEA_15>
+db.student.insert([{RollNo:1,Name:"Ram",Branch:"Computer",Marks:95},{Roll
+No:2,Name:"Ravi",Branch:"Computer",Marks:90},{RollNo:3,Name:"Jayesh",Bran
+ch:"Computer",Marks:97},{RollNo:4,Name:"Rohan",Branch:"Computer",Marks:70
+},{RollNo:5,Name:"Pande",Branch:"Computer",Marks:85}])
+DeprecationWarning: Collection.insert() is deprecated. Use insertOne,
+insertMany, or bulkWrite.
+{
+acknowledged: true,
+insertedIds: {
+'0': ObjectId('68d384417931101987964033'),
+'1': ObjectId('68d384417931101987964034'),
+'2': ObjectId('68d384417931101987964035'),
+'3': ObjectId('68d384417931101987964036'),
+'4': ObjectId('68d384417931101987964037')
+}
+}
+TEA_15> db.student.find().pretty()
+[
+{
+_id: ObjectId('68d384417931101987964033'),
+RollNo: 1,
+Name: 'Ram',
+Branch: 'Computer',
+Marks: 95
+},
+{
+_id: ObjectId('68d384417931101987964034'),
+RollNo: 2,
+Name: 'Ravi',
+Branch: 'Computer',
+Marks: 90
+},
+{
+_id: ObjectId('68d384417931101987964035'),
+RollNo: 3,
+Name: 'Jayesh',
+Branch: 'Computer',
+Marks: 97
+},
+{
+_id: ObjectId('68d384417931101987964036'),
+RollNo: 4,
+Name: 'Rohan',
+Branch: 'Computer',
+Marks: 70
+},
+{
+_id: ObjectId('68d384417931101987964037'),
+RollNo: 5,
+Name: 'Pande',
+Branch: 'Computer',
+Marks: 85
+}
+]
+TEA_15>
+db.student.insert([{RollNo:6,Name:"Pranav",Branch:"IT",Marks:54},{RollNo:
+6,Name:"Devang",Branch:"IT",Marks:60}])
+{
+acknowledged: true,
+insertedIds: {
+'0': ObjectId('68d385fb7931101987964038'),
+'1': ObjectId('68d385fb7931101987964039')
+}
+}
+TEA_15>
+db.student.aggregate([{$group:{_id:"$Branch",Total_Marks:{$sum$sum:"$Mark
+s"}}}])
+[
+{ _id: 'IT', Total_Marks: 114 },
+{ _id: 'Computer', Total_Marks: 437 }
+]
+TEA_15>
+db.student.aggregate([{$group:{_id:"$Branch",Maximum_Marks:{$max:"$Marks"
+}}}])
+[
+{ _id: 'IT', Maximum_Marks: 60 },
+{ _id: 'Computer', Maximum_Marks: 97 }
+]
+TEA_15>
+db.student.aggregate([{$group:{_id:"$Branch",Minimum_Marks:{$min:"$Marks"
+}}}])
+[
+{ _id: 'Computer', Minimum_Marks: 70 },
+{ _id: 'IT', Minimum_Marks: 54 }
+]
+TEA_15> db.student.find({"Marks":{$lt:92}}).pretty()
+[
+{
+_id: ObjectId('68d384417931101987964034'),
+RollNo: 2,
+Name: 'Ravi',
+Branch: 'Computer',
+Marks: 90
+},
+{
+_id: ObjectId('68d384417931101987964036'),
+RollNo: 4,
+Name: 'Rohan',
+Branch: 'Computer',
+Marks: 70
+},
+{
+_id: ObjectId('68d384417931101987964037'),
+RollNo: 5,
+Name: 'Pande',
+Branch: 'Computer',
+Marks: 85
+},
+{
+_id: ObjectId('68d385fb7931101987964038'),
+RollNo: 6,
+Name: 'Pranav',
+Branch: 'IT',
+Marks: 54
+},
+{
+_id: ObjectId('68d385fb7931101987964039'),
+RollNo: 6,
+Name: 'Devang',
+Branch: 'IT',
+Marks: 60
+}
+]
+TEA_15> db.student.find({"Marks":{$gt:92}}).pretty()
+[
+{
+_id: ObjectId('68d384417931101987964033'),
+RollNo: 1,
+Name: 'Ram',
+Branch: 'Computer',
+Marks: 95
+},
+{
+_id: ObjectId('68d384417931101987964035'),
+RollNo: 3,
+Name: 'Jayesh',
+Branch: 'Computer',
+Marks: 97
+}
+]
+TEA_15> db.student.find({"Marks":{$eq:95}}).pretty()
+[
+{
+_id: ObjectId('68d384417931101987964033'),
+RollNo: 1,
+Name: 'Ram',
+Branch: 'Computer',
+Marks: 95
+}
+]
+TEA_15> db.student.find({"Marks":{$ne:95}}).pretty()
+[
+{
+_id: ObjectId('68d384417931101987964034'),
+RollNo: 2,
+Name: 'Ravi',
+Branch: 'Computer',
+Marks: 90
+},
+{
+_id: ObjectId('68d384417931101987964035'),
+RollNo: 3,
+Name: 'Jayesh',
+Branch: 'Computer',
+Marks: 97
+},
+{
+_id: ObjectId('68d384417931101987964036'),
+RollNo: 4,
+Name: 'Rohan',
+Branch: 'Computer',
+Marks: 70
+},
+{
+_id: ObjectId('68d384417931101987964037'),
+RollNo: 5,
+Name: 'Pande',
+Branch: 'Computer',
+Marks: 85
+},
+{
+_id: ObjectId('68d385fb7931101987964038'),
+RollNo: 6,
+Name: 'Pranav',
+Branch: 'IT',
+Marks: 54
+},
+{
+_id: ObjectId('68d385fb7931101987964039'),
+RollNo: 6,
+Name: 'Devang',
+Branch: 'IT',
+Marks: 60
+}
+]
+TEA_15> db.student.find({"Marks":{$gte:95}}).pretty()
+[
+{
+_id: ObjectId('68d384417931101987964033'),
+RollNo: 1,
+Name: 'Ram',
+Branch: 'Computer',
+Marks: 95
+},
+{
+_id: ObjectId('68d384417931101987964035'),
+RollNo: 3,
+Name: 'Jayesh',
+Branch: 'Computer',
+Marks: 97
+}
+]
+TEA_15> db.student.find({"Marks":{$lte:90}}).pretty()
+[
+{
+_id: ObjectId('68d384417931101987964034'),
+RollNo: 2,
+Name: 'Ravi',
+Branch: 'Computer',
+Marks: 90
+},
+{
+_id: ObjectId('68d384417931101987964036'),
+RollNo: 4,
+Name: 'Rohan',
+Branch: 'Computer',
+Marks: 70
+},
+{
+_id: ObjectId('68d384417931101987964037'),
+RollNo: 5,
+Name: 'Pande',
+Branch: 'Computer',
+Marks: 85
+},
+{
+_id: ObjectId('68d385fb7931101987964038'),
+RollNo: 6,
+Name: 'Pranav',
+Branch: 'IT',
+Marks: 54
+},
+{
+_id: ObjectId('68d385fb7931101987964039'),
+RollNo: 6,
+Name: 'Devang',
+Branch: 'IT',
+Marks: 60
+}
+]
+TEA_15> db.student.aggregate([
+{ $group: { _id: "$Branch", Avg_Marks: { $avg: "$Marks" } } }
+])
+{ "_id": "IT", "Avg_Marks": 57 }
+{ "_id": "Computer", "Avg_Marks": 87.4 }
+TEA_15> db.student.createIndex({ Marks: 1 })
+{ "createdCollectionAutomatically": false, "numIndexesBefore": 1,
+"numIndexesAfter": 2, "ok": 1 }
+TEA_15> db.student.createIndex({ Branch: 1, Marks: -1 })
+{ "createdCollectionAutomatically": false, "numIndexesBefore": 2,
+"numIndexesAfter": 3, "ok": 1 }
