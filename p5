@@ -1,0 +1,95 @@
+TITLE:
+
+Write a PL/SQL code block to calculate the area of a circle for a value of radius varying
+from 5 to 9. Store the radius and the corresponding values of calculated area in an empty
+table named areas, consisting of two columns, radius and area.. 
+Solution:
+
+mysql> create database ass5;
+Query OK, 1 row affected (0.22 sec)
+mysql> use ass5;
+Database changed
+mysql> create table circle1(radius int(20),area float(20),diameter
+int(20),circumference float(20));
+Query OK, 0 rows affected, 2 warnings (0.83 sec)
+mysql> drop procedure if exists circlep;
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+mysql>
+mysql> delimiter //
+mysql>
+mysql> create procedure circlep()
+-> begin
+-> declare radius int;
+-> declare diameter int;
+-> declare area float;
+-> declare circumference float;
+-> declare pi float default 3.14;
+->
+-> set radius:=5;
+->
+-> cloop: LOOP
+-> set diameter:= 2*radius;
+-> set area:= pi*radius*radius;
+-> set circumference:=2*pi*radius;
+->
+-> select radius,diameter,area,circumference;
+-> insert into circle1(radius,area,diameter,circumference)
+values (radius, area, diameter,circumference);
+-> set radius=radius+1;
+-> if radius>9 then
+-> leave cloop;
+-> end if;
+->
+-> END LOOP cloop;
+-> end;
+-> // delimiter ;
+Query OK, 0 rows affected (0.19 sec)
+-> // delimiter ;
+ERROR:
+DELIMITER must be followed by a 'delimiter' character or string
+mysql> call circle;
+ERROR 1305 (42000): PROCEDURE ass5.circle does not exist
+mysql> call circlep;
+
++--------+----------+------+---------------+
+| radius | diameter | area | circumference |
++--------+----------+------+---------------+
+| 5 | 10 | 78.5 | 31.4 |
++--------+----------+------+---------------+
+1 row in set (0.00 sec)
++--------+----------+--------+---------------+
+| radius | diameter | area | circumference |
++--------+----------+--------+---------------+
+| 6 | 12 | 113.04 | 37.68 |
++--------+----------+--------+---------------+
+1 row in set (0.10 sec)
++--------+----------+--------+---------------+
+| radius | diameter | area | circumference |
++--------+----------+--------+---------------+
+| 7 | 14 | 153.86 | 43.96 |
++--------+----------+--------+---------------+
+1 row in set (0.20 sec)
++--------+----------+--------+---------------+
+| radius | diameter | area | circumference |
++--------+----------+--------+---------------+
+| 8 | 16 | 200.96 | 50.24 |
++--------+----------+--------+---------------+
+1 row in set (0.30 sec)
++--------+----------+--------+---------------+
+| radius | diameter | area | circumference |
++--------+----------+--------+---------------+
+| 9 | 18 | 254.34 | 56.52 |
++--------+----------+--------+---------------+
+1 row in set (0.40 sec)
+Query OK, 1 row affected (0.50 sec)
+mysql> select *from circle1;
++--------+--------+----------+---------------+
+| radius | area | diameter | circumference |
++--------+--------+----------+---------------+
+| 5 | 78.5 | 10 | 31.4 |
+| 6 | 113.04 | 12 | 37.68 |
+| 7 | 153.86 | 14 | 43.96 |
+| 8 | 200.96 | 16 | 50.24 |
+| 9 | 254.34 | 18 | 56.52 |
++--------+--------+----------+---------------+
+5 rows in set (0.00 sec)
