@@ -1,0 +1,77 @@
+Assignment no - 3(B)
+"MongoDB – Map-reduces operations:
+Implement Map reduces operation with suitable example using MongoDB."
+
+
+test> use TEA_15
+switched to db TEA_15
+TEA_15> db.createCollection("TE")
+{ ok: 1 }
+TEA_15> db.TE.insert({Rollno:1,Marks:98,Div:'B'})
+DeprecationWarning: Collection.insert() is deprecated. Use insertOne,
+insertMany, or bulkWrite.
+{
+acknowledged: true,
+insertedIds: { '0': ObjectId('68db6e46dd39c474a6964033') }
+}
+TEA_15> db.TE.insert({Rollno:2,Marks:90,Div:'A'})
+{
+acknowledged: true,
+insertedIds: { '0': ObjectId('68db6e53dd39c474a6964034') }
+}
+TEA_15> db.TE.insert({Rollno:3,Marks:84,Div:'A'})
+{
+acknowledged: true,
+insertedIds: { '0': ObjectId('68db6e5edd39c474a6964035') }
+}
+TEA_15> db.TE.insert({Rollno:4,Marks:70,Div:'A'})
+{
+acknowledged: true,
+insertedIds: { '0': ObjectId('68db6e78dd39c474a6964036') }
+}
+TEA_15> db.TE.find()
+[
+{
+_id: ObjectId('68db6e46dd39c474a6964033'),
+Rollno: 1,
+Marks: 98,
+Div: 'B'
+},
+{
+_id: ObjectId('68db6e53dd39c474a6964034'),
+Rollno: 2,
+Marks: 90,
+Div: 'A'
+},
+{
+_id: ObjectId('68db6e5edd39c474a6964035'),
+Rollno: 3,
+Marks: 84,
+Div: 'A'
+},
+{
+_id: ObjectId('68db6e78dd39c474a6964036'),
+Rollno: 4,
+Marks: 70,
+Div: 'A'
+}
+]
+TEA_15> db.TE.mapReduce(
+... function() {emit(this.Rollno,this.Marks);},
+... function(key,values){return Array.sum(values)},
+... {
+... query:{Div:"A"},
+... out:"Total_Marks"
+... }
+... )
+DeprecationWarning: Collection.mapReduce() is deprecated. Use an
+aggregation instead.
+See https://docs.mongodb.com/manual/core/map-reduce for details.
+{ result: 'Total_Marks', ok: 1 }
+TEA_15> show collections
+Student
+Subjects
+TE
+Total_Marks
+TEA_15> db.Total_Marks.find()
+[ { _id: 2, value: 90 }, { _id: 4, value: 70 }, { _id: 3, value: 84 } ]
