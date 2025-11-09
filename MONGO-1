@@ -1,0 +1,209 @@
+Assignment no - 1(B)
+"MongoDB Queries:
+DesignandDevelopMongoDBQueriesusingCRUDoperations.(UseCRUDoperations,
+SAVE method, logical operators etc.)."
+
+
+test> show dbs
+TEA37 120.00 KiB
+TEA4 224.00 KiB
+TEB01 72.00 KiB
+admin 40.00 KiB
+config 96.00 KiB
+dbms30 8.00 KiB
+local 136.00 KiB
+test 720.00 KiB
+test> use TEA_15
+switched to db TEA_15
+TEA_15> db.createCollection("Student")
+{ ok: 1 }
+TEA_15> show collections
+Student
+TEA_15> db.Student.insert([{RollNo : 1, Name : "Ram", City :
+"Nashik"},{RollNo : 2, Name : "Ravi", City : "Pune"},{RollNo : 3, NName :
+"Sahil", City : "Mumbai"}])
+DeprecationWarning: Collection.insert() is deprecated. Use insertOne,
+insertMany, or bulkWrite.
+{
+acknowledged: true,
+insertedIds: {
+'0': ObjectId('68d27dc17d672e21c4964033'),
+'1': ObjectId('68d27dc17d672e21c4964034'),
+'2': ObjectId('68d27dc17d672e21c4964035')
+}
+}
+TEA_15> db.Student.find()
+[
+{
+_id: ObjectId('68d27dc17d672e21c4964033'),
+RollNo: 1,
+Name: 'Ram',
+City: 'Nashik'
+},
+{
+_id: ObjectId('68d27dc17d672e21c4964034'),
+RollNo: 2,
+Name: 'Ravi',
+City: 'Pune'
+},
+{
+_id: ObjectId('68d27dc17d672e21c4964035'),
+RollNo: 3,
+Name: 'Sahil',
+City: 'Mumbai'
+}
+]
+TEA_15> db.Student.find().pretty()
+[
+{
+_id: ObjectId('68d27dc17d672e21c4964033'),
+RollNo: 1,
+Name: 'Ram',
+City: 'Nashik'
+},
+{
+_id: ObjectId('68d27dc17d672e21c4964034'),
+RollNo: 2,
+Name: 'Ravi',
+City: 'Pune'
+},
+{
+_id: ObjectId('68d27dc17d672e21c4964035'),
+RollNo: 3,
+Name: 'Sahil',
+City: 'Mumbai'
+}
+]
+TEA_15> db.Student.insertOne({RollNo : 1, Name : "Ram", City : "Nashik",
+Pincode : 422005})
+{
+acknowledged: true,
+insertedIds: { '0': ObjectId('68d27e547d672e21c4964036') }
+}
+TEA_15> db.Student.find().pretty()
+[
+{
+_id: ObjectId('68d27dc17d672e21c4964033'),
+RollNo: 1,
+Name: 'Ram',
+City: 'Nashik'
+},
+{
+_id: ObjectId('68d27dc17d672e21c4964034'),
+RollNo: 2,
+Name: 'Ravi',
+City: 'Pune'
+},
+{
+_id: ObjectId('68d27dc17d672e21c4964035'),
+RollNo: 3,
+Name: 'Sahil',
+City: 'Mumbai'
+},
+{
+_id: ObjectId('68d27e547d672e21c4964036'),
+RollNo: 1,
+Name: 'Ram',
+City: 'Nashik',
+Pincode: 422005
+}
+]
+TEA_15> db.Subjects.insertMany([{id : 11, Name : "DBMS", Dept :
+"Computer"},{id : 12, Name : "OOP", Dept : "Computer"}])
+{
+acknowledged: true,
+insertedIds: {
+'0': ObjectId('68d27f0b7d672e21c4964037'),
+'1': ObjectId('68d27f0b7d672e21c4964038')
+}
+}
+TEA_15> db.Subjects.find().pretty()
+[
+{
+_id: ObjectId('68d27f0b7d672e21c4964037'),
+id: 11,
+Name: 'DBMS',
+Dept: 'Computer'
+},
+{
+_id: ObjectId('68d27f0b7d672e21c4964038'),
+id: 12,
+Name: 'OOP',
+Dept: 'Computer'
+}
+]
+TEA_15> db.Subjects.drop()
+true
+TEA_15> show collections;
+Student
+TEA_15> db.Subjects.insert([{id : 11, Name : "DBMS", Dept :
+"Computer"},{id : 12, Name : "OOP", Dept : "Computer"}])
+{
+acknowledged: true,
+insertedIds: {
+'0': ObjectId('68d27fb67d672e21c4964039'),
+'1': ObjectId('68d27fb67d672e21c496403a')
+}
+}
+TEA_15> show collections;
+Student
+Subjects
+TEA_15> db.Subjects.update({'Dept' : 'Computer'},{$set:{'Branch' :
+'Computer'}},{multi : true})
+DeprecationWarning: Collection.update() is deprecated. Use updateOne,
+updateMany, or bulkWrite.
+{
+acknowledged: true,
+insertedId: null,
+matchedCount: 2,
+modifiedCount: 2,
+upsertedCount: 0
+}
+TEA_15> db.Subjects.find().pretty()
+[
+{
+_id: ObjectId('68d27fb67d672e21c4964039'),
+id: 11,
+Name: 'DBMS',
+Dept: 'Computer',
+Branch: 'Computer'
+},
+{
+_id: ObjectId('68d27fb67d672e21c496403a'),
+id: 12,
+Name: 'OOP',
+Dept: 'Computer',
+Branch: 'Computer'
+}
+]
+TEA_15> db.Student.save({ RollNo: 5, Name: "Akash", City: "Mumbai",
+Marks: 75 })
+{
+"acknowledged" : true,
+"insertedId" : ObjectId("...") // if new
+}
+TEA_15> db.Student.find({ Marks: { $gte: 60, $lte: 90 } })
+{ "_id": ObjectId("..."), "RollNo": 1, "Name": "Sachin", "City":
+"Nashik", "Marks": 90, "Pincode": 422005 }
+{ "_id": ObjectId("..."), "RollNo": 2, "Name": "Ravi", "City": "Pune",
+"Marks": 70 }
+{ "_id": ObjectId("..."), "RollNo": 4, "Name": "Vedika", "City":
+"Nashik", "Marks": 60, "Pincode": 422005 }
+{ "_id": ObjectId("..."), "RollNo": 5, "Name": "Akash", "City": "Mumbai",
+"Marks": 75 }
+TEA_15> db.Student.find({ City: { $ne: "Pune" } })
+{ "_id": ObjectId("..."), "RollNo": 1, "Name": "Sachin", "City":
+"Nashik", "Marks": 90, "Pincode": 422005 }
+{ "_id": ObjectId("..."), "RollNo": 4, "Name": "Vedika", "City":
+"Nashik", "Marks": 60, "Pincode": 422005 }
+{ "_id": ObjectId("..."), "RollNo": 5, "Name": "Akash", "City": "Mumbai",
+"Marks": 75 }
+TEA_15> db.Student.find({ $or: [ { Name: "Ravi" }, { Marks: { $gt: 80 } }
+] })
+{ "_id": ObjectId("..."), "RollNo": 1, "Name": "Sachin", "City":
+"Nashik", "Marks": 90, "Pincode": 422005 }
+{ "_id": ObjectId("..."), "RollNo": 2, "Name": "Ravi", "City": "Pune",
+"Marks": 70 }
+TEA_15> db.Student.find({ Name: /^V/ })
+{ "_id": ObjectId("..."), "RollNo": 4, "Name": "Vedika", "City":
+"Nashik", "Marks": 60, "Pincode": 422005 }
