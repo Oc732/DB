@@ -1,0 +1,99 @@
+Title: Write a PL/SQL block of code using parameterized Cursor that will merge the
+data available in the newly created table N_Roll Call with the data available in the
+table O_RollCall. If the data in the first table already exist in the second table then that
+data should be skipped.
+
+Solution:
+
+mysql> CREATE DATABASE rollcall_db;
+Query OK, 1 row affected (0.20 sec)
+mysql> USE rollcall_db;
+Database changed
+mysql> CREATE TABLE O_RollCall (
+-> rollno INT PRIMARY KEY,
+-> name VARCHAR(50)
+-> );
+Query OK, 0 rows affected (1.56 sec)
+mysql> CREATE TABLE N_RollCall (
+-> rollno INT PRIMARY KEY,
+-> name VARCHAR(50)
+-> );
+Query OK, 0 rows affected (0.66 sec)
+mysql> -- Existing students
+mysql> INSERT INTO O_RollCall VALUES (1, 'Alice');
+Query OK, 1 row affected (0.12 sec)
+mysql> INSERT INTO O_RollCall VALUES (2, 'Bob');
+Query OK, 1 row affected (0.17 sec)
+mysql>
+mysql> -- New roll call (with overlap + new)
+mysql> INSERT INTO N_RollCall VALUES (2, 'Bob'); -- already
+exists
+Query OK, 1 row affected (0.16 sec)
+mysql> INSERT INTO N_RollCall VALUES (3, 'Charlie'); -- new
+Query OK, 1 row affected (0.10 sec)
+mysql> INSERT INTO N_RollCall VALUES (4, 'Diana'); -- new
+Query OK, 1 row affected (0.15 sec)
+mysql> SELECT * FROM O_RollCall;
++ + +
+| rollno | name |
++ + +
+| 1 | Alice |
+| 2 | Bob |
++ + +
+
+4 rows in set (0.00 sec)
+mysql> SELECT * FROM N_RollCall;
++ + +
+| rollno | name |
++ + +
+| 2 | Bob |
+| 3 | Charlie |
+| 4 | Diana |
++ + +
+3 rows in set (0.00 sec)
+mysql> DROP PROCEDURE IF EXISTS mycursor1;
+Query OK, 0 rows affected, 1 warning (0.04 sec)
+mysql>
+mysql> DELIMITER //
+mysql>
+mysql> CREATE PROCEDURE mycursor1()
+-> BEGIN
+-> DECLARE done INT DEFAULT 0;
+-> DECLARE c_rollno INT;
+-> DECLARE c_name CHAR(20);
+->
+-> DECLARE c_studentN CURSOR FOR
+-> SELECT rollno, name
+-> FROM O_RollCall
+-> WHERE rollno NOT IN (SELECT rollno FROM N_RollCall);
+->
+-> DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+->
+-> OPEN c_studentN;
+-> read_loop: LOOP
+-> FETCH c_studentN INTO c_rollno, c_name;
+->
+-> IF done = 1 THEN
+-> LEAVE read_loop;
+-> END IF;
+->
+-> INSERT INTO N_RollCall (rollno, name)
+-> VALUES (c_rollno, c_name);
+-> END LOOP;
+-> CLOSE c_studentN;
+-> END;
+-> //
+Query OK, 0 rows affected (0.14 sec)
+mysql>
+mysql> DELIMITER ;
+mysql> CALL mycursor1();
+Query OK, 0 rows affected (0.10 sec)
+mysql> SELECT * FROM N_RollCall;
++ + +
+| rollno | name |
++ + +
+| 1 | Alice |
+| 2 | Bob |
+| 3 | Charlie |
+| 4 | Diana |
++ + +
