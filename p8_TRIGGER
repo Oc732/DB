@@ -1,99 +1,99 @@
-Title: Write a PL/SQL block of code using parameterized Cursor that will merge the
-data available in the newly created table N_Roll Call with the data available in the
-table O_RollCall. If the data in the first table already exist in the second table then that
-data should be skipped.
+or deleted records should be added in Library_Audit table.
 
-Solution:
 
-mysql> CREATE DATABASE rollcall_db;
-Query OK, 1 row affected (0.20 sec)
-mysql> USE rollcall_db;
-Database changed
-mysql> CREATE TABLE O_RollCall (
--> rollno INT PRIMARY KEY,
--> name VARCHAR(50)
--> );
-Query OK, 0 rows affected (1.56 sec)
-mysql> CREATE TABLE N_RollCall (
--> rollno INT PRIMARY KEY,
--> name VARCHAR(50)
--> );
-Query OK, 0 rows affected (0.66 sec)
-mysql> -- Existing students
-mysql> INSERT INTO O_RollCall VALUES (1, 'Alice');
+Solution: 
+
+
+mysql> create database assign8
 Query OK, 1 row affected (0.12 sec)
-mysql> INSERT INTO O_RollCall VALUES (2, 'Bob');
-Query OK, 1 row affected (0.17 sec)
+mysql> use assign8
+Database changed
+mysql> create table lib_book(bid int, bname varchar(50), qty int);
+Query OK, 0 rows affected (1.29 sec)
+mysql> insert into lib_book(bid, bname,
+qty)values(101,"DBMS",13),(102,"TOC",17),(103,"SPOS",22),(104,"CNS",31)
+,(105,"SPM",2);
+Query OK, 5 rows affected (0.11 sec)
+Records: 5 Duplicates: 0 Warnings: 0
+mysql> select *from lib_book;
++------+-------+------+
+| bid | bname | qty |
++------+-------+------+
+| 101 | DBMS | 13 |
+| 102 | TOC | 17 |
+| 103 | SPOS | 22 |
+| 104 | CNS | 31 |
+| 105 | SPM | 2 |
++------+-------+------+
+5 rows in set (0.01 sec)
+mysql> create table lib_Audit(bid int, bname varchar(50), qty int);
+Query OK, 0 rows affected (1.13 sec)
+mysql> drop trigger if exists Make_audit1;
+Query OK, 0 rows affected, 1 warning (0.03 sec)
 mysql>
-mysql> -- New roll call (with overlap + new)
-mysql> INSERT INTO N_RollCall VALUES (2, 'Bob'); -- already
-exists
-Query OK, 1 row affected (0.16 sec)
-mysql> INSERT INTO N_RollCall VALUES (3, 'Charlie'); -- new
-Query OK, 1 row affected (0.10 sec)
-mysql> INSERT INTO N_RollCall VALUES (4, 'Diana'); -- new
-Query OK, 1 row affected (0.15 sec)
-mysql> SELECT * FROM O_RollCall;
-+ + +
-| rollno | name |
-+ + +
-| 1 | Alice |
-| 2 | Bob |
-+ + +
-
-4 rows in set (0.00 sec)
-mysql> SELECT * FROM N_RollCall;
-+ + +
-| rollno | name |
-+ + +
-| 2 | Bob |
-| 3 | Charlie |
-| 4 | Diana |
-+ + +
-3 rows in set (0.00 sec)
-mysql> DROP PROCEDURE IF EXISTS mycursor1;
-Query OK, 0 rows affected, 1 warning (0.04 sec)
+mysql> delimiter //
 mysql>
-mysql> DELIMITER //
-mysql>
-mysql> CREATE PROCEDURE mycursor1()
+mysql> CREATE TRIGGER Make_audit1
+-> AFTER DELETE ON lib_book
+-> FOR EACH ROW
 -> BEGIN
--> DECLARE done INT DEFAULT 0;
--> DECLARE c_rollno INT;
--> DECLARE c_name CHAR(20);
-->
--> DECLARE c_studentN CURSOR FOR
--> SELECT rollno, name
--> FROM O_RollCall
--> WHERE rollno NOT IN (SELECT rollno FROM N_RollCall);
-->
--> DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-->
--> OPEN c_studentN;
--> read_loop: LOOP
--> FETCH c_studentN INTO c_rollno, c_name;
-->
--> IF done = 1 THEN
--> LEAVE read_loop;
--> END IF;
-->
--> INSERT INTO N_RollCall (rollno, name)
--> VALUES (c_rollno, c_name);
--> END LOOP;
--> CLOSE c_studentN;
+-> INSERT INTO lib_Audit (bid, bname, qty)
+-> VALUES (OLD.bid, OLD.bname,OLD.qty);
 -> END;
+
 -> //
-Query OK, 0 rows affected (0.14 sec)
+Query OK, 0 rows affected (0.17 sec)
 mysql>
-mysql> DELIMITER ;
-mysql> CALL mycursor1();
-Query OK, 0 rows affected (0.10 sec)
-mysql> SELECT * FROM N_RollCall;
-+ + +
-| rollno | name |
-+ + +
-| 1 | Alice |
-| 2 | Bob |
-| 3 | Charlie |
-| 4 | Diana |
-+ + +
+mysql> delimiter ;
+mysql>
+mysql> delete from lib_book where bid=105;
+Query OK, 1 row affected (0.10 sec)
+mysql> select *from lib_book;
++------+-------+------+
+| bid | bname | qty |
++------+-------+------+
+| 101 | DBMS | 13 |
+| 102 | TOC | 17 |
+| 103 | SPOS | 22 |
+| 104 | CNS | 31 |
++------+-------+------+
+4 rows in set (0.00 sec)
+mysql> select *from lib_Audit;
++------+-------+------+
+| bid | bname | qty |
++------+-------+------+
+| 105 | SPM | 2 |
++------+-------+------+
+1 row in set (0.00 sec)
+mysql> drop trigger if exists Make_audit2;
+Query OK, 0 rows affected, 1 warning (0.04 sec)
+mysql> delimiter //
+mysql> CREATE TRIGGER Make_audit2
+-> AFTER UPDATE ON lib_book
+-> FOR EACH ROW
+-> BEGIN
+-> INSERT INTO lib_Audit(bid,bname,qty)
+-> VALUES(OLD.bid,OLD.bname,OLD.qty);
+-> END;
+-> // delimeter ;
+Query OK, 0 rows affected (0.14 sec)
+-> // delimiter ;
+mysql> update lib_book SET bid=105 where bid=104;
+Query OK, 1 row affected (0.10 sec)
+Rows matched: 1 Changed: 1 Warnings: 0
+mysql> select *from lib_book;
++------+-------+------+
+| bid | bname | qty |
++------+-------+------+
+| 101 | DBMS | 13 |
+| 102 | TOC | 17 |
+| 103 | SPOS | 22 |
+| 105 | CNS | 31 |
++------+-------+------+
+mysql> select *from lib_Audit;
++------+-------+------+
+| bid | bname | qty |
++------+-------+------+
+| 105 | SPM | 2 |
+| 104 | CNS | 31 |
++------+-------+------+
